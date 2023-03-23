@@ -2,9 +2,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
 import random
 import linecache
-#####TODO#####
-#turn shift_ciphers into a .json file that is loaded on startup?
-#find someway to make this into a .exe
 shift_cipher1 = {'a':15,'b':78,'c':23,'d':11,'e':65,'f':24,'g':76,'h':87,'i':90,'j':16,'k':48,'l':93,'m':58,'n':97,'o':53,'p':84,'q':86,'r':59,'s':35,'t':36,'u':63,'v':57,'w':75,'x':41,'y':79,'z':74,' ':92,',':10,'.':29,'!':12}
 shift_cipher2 = {15:'a',78:'b',23:'c',11:'d',65:'e',24:'f',76:'g',87:'h',90:'i',16:'j',48:'k',93:'l',58:'m',97:'n',53:'o',84:'p',86:'q',59:'r',35:'s',36:'t',63:'u',57:'v',75:'w',41:'x',79:'y',74:'z',92:' ',10:',',29:'.',12:'!'}
 class Ui_Encrypt_Dialog(object):
@@ -156,15 +153,6 @@ class Ui_MainWindow(object):
         self.pushButton_2.setGeometry(QtCore.QRect(125, 170, 150, 60))
         self.pushButton_2.setObjectName("pushButton_2")
         MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 400, 21))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.actionAbout = QtWidgets.QAction(MainWindow)
-        self.actionAbout.setObjectName("actionAbout")
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.button1.clicked.connect(Generate_New_keys)
@@ -176,20 +164,22 @@ class Ui_MainWindow(object):
         self.button1.setText(_translate("MainWindow", "Generate New keys"))
         self.pushButton.setText(_translate("MainWindow", "Encrypt"))
         self.pushButton_2.setText(_translate("MainWindow", "Decrypt"))
-        self.actionAbout.setText(_translate("MainWindow", "About"))
 def Generate_New_keys():
+    config_file_path = os.path.join(os.path.dirname(__file__), 'config.txt')
+    path = linecache.getline(config_file_path,1).rstrip('\n')
     p,q = choose_primes('300 digit primes.txt',18)
     n,m,e,d = generate_keys(p,q)
-    with open('private_keys.txt','w') as f:
+    with open(path+r'\private_keys.txt','w') as f:
         f.write(str(n)+'\n')
         f.write(str(d))
-    with open('public_keys.txt','w') as f:
+    with open(path+r'\public_keys.txt','w') as f:
         f.write(str(n)+'\n')
         f.write(str(e))
 if __name__ == '__main__':
-    import sys
+    import sys, os
     app = QtWidgets.QApplication(sys.argv)        
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
+    sys.exit(app.exec_())
